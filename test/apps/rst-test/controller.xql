@@ -61,22 +61,23 @@ declare function local:fallback-login($domain as xs:string, $path as xs:string, 
 
 if(starts-with($exist:path,"/model")) then
     let $params := subsequence(tokenize($exist:path,"/"), 3)
-    let $model := $params[1]
-    let $params := remove($params,1)
-    let $id := string-join($params,"/")
+    let $path := string-join($params,"/")
+    let $module-uri := "http://lagua.nl/rst-test/services/simple"
+    let $module-prefix := "service"
+    let $module-location := $exist:controller || "/modules/service.xql"
+    let $root-collection := $exist:controller || "/data"
     return
     	<dispatch xmlns="http://exist.sourceforge.net/NS/exist">
 			<forward url="{$exist:controller}/modules/model.xql">
                 {$login("org.exist.login", "/", (), false())}
                 <set-header name="Cache-Control" value="no-cache"/>
-				<add-parameter name="model" value="{$model}"/>
-                <add-parameter name="id" value="{$id}"/>
+				<add-parameter name="path" value="{$path}"/>
+                <add-parameter name="module-uri" value="{$module-uri}"/>
+                <add-parameter name="module-prefix" value="{$module-prefix}"/>
+                <add-parameter name="module-location" value="{$module-location}"/>
+                <add-parameter name="root-collection" value="{$root-collection}"/>
 			</forward>
 		</dispatch>
-else if(starts-with($exist:path,"/test")) then
-	<dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-		<forward url="{$exist:controller}/modules/test.xql" />
-	</dispatch>
 else
     (: everything else is passed through :)
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
