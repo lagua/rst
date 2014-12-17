@@ -16,7 +16,7 @@ Why normalize?
 
 While working on projects with [Dojo Toolkit](http://dojotoolkit.org), it became clear to me that the Dojo concept 
 of what REST is and should be is quite concise. The client library has been developed in tandem with 
-Persevere, a Dojo Foundation project for the server. It follows these principles:
+[Persevere](http://persvr.org), a Dojo Foundation project for the server. It follows these principles:
 
 * A target path is considered to be /path/to/collection
 * The entire path following the collection is considered to be an id, and may contain slashes. 
