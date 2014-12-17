@@ -14,7 +14,7 @@ Build the package and install into eXist using the manager in the dashboard.
 
 Why normalize?
 
-While working on projects with Dojo, it became clear to me that the Dojo concept 
+While working on projects with [Dojo Toolkit](http://dojotoolkit.org), it became clear to me that the Dojo concept 
 of what REST is and should be is quite concise. The client library has been developed in tandem with 
 Persevere, a Dojo Foundation project for the server. It follows these principles:
 
