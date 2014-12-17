@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://expath.org/ns/pkg" name="http://lagua.nl/pkg/rst" abbrev="rst" version="0.1" spec="1.0">
-    <title>RST: Simple REST processor</title>
+    <title>RST: Normalizer for XML/JSON REST</title>
     <xquery>
         <namespace>http://lagua.nl/lib/rst</namespace>
         <file>rst.xql</file>
