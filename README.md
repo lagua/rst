@@ -1,0 +1,79 @@
+rst
+====
+
+RST: An XML/JSON CRUD normalizer for RESTXQ
+
+Test with eXist:
+--------
+
+Download and install eXist 2.x @ http://exist-db.org
+
+Build the package and install into eXist using the manager in the dashboard.
+
+--------
+
+Why normalize?
+
+While working on projects with Dojo, it became clear to me that the Dojo concept 
+of what REST is and should be is quite concise. The client library has been developed in tandem with 
+Persevere, a Dojo Foundation project for the server. It follows these principles:
+
+* A target path is considered to be /path/to/collection
+* The entire path following the collection is considered to be an id, and may contain slashes. 
+This departs from some other concepts, where path fragments are used to denote subsets of the data-model, 
+specific functionality on the data-set or even unrelated data.
+* The functions that used for CRUD on the client-side are mirrored on the server-side. These are: 
+get, query, put, and delete.
+* In addition, contents may be posted that trigger custom functionality, either on a specific resource 
+or the entire collection.
+
+Please note that this library DOES NOT perform actually perform any of these actions! It merely provides 
+an intermediary step between RESTXQ and another library that takes care of the actual database manipulation.
+
+The core functions perform the following actions (largely taken from https://github.com/persvr/perstore):
+
+* `get` retrieves a resource by its id.
+* `query` retrieves the entire collection of resources, that may then be filtered, sorted and paged.
+* `put` creates or updates a resource. The resource may or may not already exist. 
+An optional parameter defines the primary identifier for storing the resource. 
+If that is not specified, the id may be auto-generated. The created/updated resource should be returned.
+* `delete` deletes the resources with the given identifier from the collection.
+
+An example library module that will be consumed by rst could be this:
+
+```xquery
+xquery version "3.0";
+
+declare function rst:get($collection as xs:anyURI,$id as xs:string) {
+	doc($collection || "/" || $id || ".xml")
+};
+
+declare function rst:query($collection as xs:anyURI, $query-string as xs:string, $directives as map) {
+	(: just return the collection in this example :)
+	collection($collection)
+};
+
+declare function rst:put($collection as xs:anyURI,$data as node(), $directives as map) {
+	(: just use 'id' as primary key: this is also the key in $directives :)
+	let $id := $data/id/string()
+	let $id :=
+		if($id) then
+			$id
+		else
+			util:uuid()
+	let $data := 
+		element { name($data) } {
+			$data/@*,
+			element id { $id },
+			$data/*[name() ne "id"]
+		}
+	return xmldb:store($collection,$id || ".xml", $data) 
+};
+
+declare function rst:delete($collection as xs:anyURI, $id as xs:string) {
+	xmldb:remove($collection, $id || ".xml")
+};
+```
+
+A much more complete standard library will be provided by the next version of https://github.com/lagua/mdl. 
+It will use https://github.com/lagua/rql as its main query processor.
