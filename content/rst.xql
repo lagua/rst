@@ -1,34 +1,32 @@
 xquery version "3.0";
 
 (:
- * This module provides RQL parsing and querying. For example:
- * var parsed = require("./parser").parse("b=3&le(c,5)");
+ * This module provides an interface that normalizes to Dojo/Persevere-style REST functions
  :)
 
 module namespace rst="http://lagua.nl/lib/rst";
 
 declare namespace request="http://exist-db.org/xquery/request";
 declare namespace response="http://exist-db.org/xquery/response";
-import module namespace xmldb="http://exist-db.org/xquery/xmldb";
 import module namespace xqjson="http://xqilla.sourceforge.net/lib/xqjson";
 
 (:  the main function to call from a controller :)
-declare function rst:request($path,$functions) {
-	let $params := tokenize($path, "/")
-	let $model := $params[1]
-	let $params := remove($params,1)
-    let $id := string-join($params,"/")
+declare function rst:process($path as xs:string, $params as map) {
+	let $model := replace($path, "^/*([^/]+)/.*", "$1")
+	let $id := replace($path, "^/*[^/]+(.*)", "$1")
 	let $method := request:get-method()
-	let $qstr := request:get-query-string()
+	let $query-string := request:get-query-string()
 	let $content-type := request:get-header("content-type")
 	let $accept := request:get-header("accept")
-	
+	let $root := $params("root-collection")
+	(: TODO choose default root :)
+	let $collection := xs:anyURI($root || "/" || $model)
 	return
 		if($method = "GET") then
 			if($qstr = "" and $id != "") then
-				rst:get($model,$id,$functions)
+				rst:get($collection,$id,$params)
 			else 
-				rst:query($qrstr,$functions)
+				rst:query($collection,$query-string,$params)
 		else if($method=("PUT","POST")) then
 			(: assume data :)
 			let $data := request:get-data()
@@ -41,16 +39,59 @@ declare function rst:request($path,$functions) {
 							"{}"
 					return rst:to-plain-xml(xqjson:parse-json($data))
 				else
-					(:  bdeebdeebdatsallfolks :)
+					(:  bdee bdee bdatsallfolks :)
 					$data
 			return
 				(: this launches a custom method :)
 				if($method = "POST" and exists($data[method|function])) then
-					rst:method($functions($data/*[name() = ("method","function")]/string(),$data))
+					rst:custom($collection,$id,$data,$params)
+				else
+					rst:put($collection,$data,$params)
+		else if($method = "DELETE") then
+			rst:delete($collection,$id,$params)
+		else
+			(: json-friendly error :)
+			(
+				response:set-status(405),
+				<json:value>Error: Method not implemented</json:value>
+			)
 };
 
-declare function rst:method($fn,$data) {
-	
+declare function rst:get(collection as xs:anyURI,$id as xs:string,$params as map) {
+	let $module := rst:import-module($params)
+	let $fn := function-lookup(xs:QName($params("module-prefix") || ":get"), 3)
+	return $fn(collection,$id,$params)
+};
+
+declare function rst:query(collection as xs:anyURI,$query-string as xs:string,$params as map) {
+	let $module := rst:import-module($params)
+	let $fn := function-lookup(xs:QName($params("module-prefix") || ":query"), 3)
+	return $fn(collection,$query-string,$params)
+};
+
+declare function rst:put(collection as xs:anyURI,$data as node(),$params as map) {
+	let $module := rst:import-module($params)
+	let $fn := function-lookup(xs:QName($params("module-prefix") || ":put"), 3)
+	return $fn(collection,$data,$params)
+};
+
+declare function rst:delete(collection as xs:anyURI,$id as xs:string,$params as map) {
+	let $module := rst:import-module($params)
+	let $fn := function-lookup(xs:QName($params("module-prefix") || ":delete"), 3)
+	return $fn(collection,$id,$params)
+};
+
+declare function rst:custom($collection as xs:anyURI,$id as xs:string,$data as node(),$params as map) {
+	let $module := rst:import-module($params)
+	let $fn := function-lookup(xs:QName($params("module-prefix") || ":" || $data/*[name() = ("method","function")), 4)
+	return $fn(collection,$id,$data,$params)
+};
+
+declare function rst:import-module($params as map) {
+	let $uri := xs:anyURI($params("module-uri"))
+	let $prefix := $params("module-prefix")
+	let $location := xs:anyURI($params("module-location"))
+	return util:import-module($uri, $prefix, $location)
 };
 
 declare function rst:to-plain-xml($node as element()) as element()* {
