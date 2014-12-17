@@ -27,7 +27,7 @@ get, query, put, and delete.
 * In addition, contents may be posted that trigger custom functionality, either on a specific resource 
 or the entire collection.
 
-Please note that this library DOES NOT perform actually perform any of these actions! It merely provides 
+Please note that this library DOES NOT actually perform any of these actions! It merely provides 
 an intermediary step between RESTXQ and another library that takes care of the actual database manipulation.
 
 The core functions perform the following actions (largely taken from https://github.com/persvr/perstore):
@@ -75,5 +75,5 @@ declare function rst:delete($collection as xs:anyURI, $id as xs:string) {
 };
 ```
 
-A much more complete standard library will be provided by the next version of https://github.com/lagua/mdl. 
-It will use https://github.com/lagua/rql as its main query processor.
+A much more complete standard library will be provided by the next version of https://github.com/lagua/xmdl. 
+It will use https://github.com/lagua/xrql as its main query processor.
