@@ -22,7 +22,7 @@ declare function rst:process($path as xs:string, $params as map) {
 	let $model := replace($path, "^/*([^/]+)/.*", "$1")
 	let $id := replace($path, "^/*[^/]+(.*)", "$1")
 	let $method := request:get-method()
-	let $query-string := request:get-query-string()
+	let $query-string := string(request:get-query-string())
 	let $content-type := request:get-header("content-type")
 	let $accept := request:get-header("accept")
 	let $root := $params("root-collection")
@@ -30,7 +30,7 @@ declare function rst:process($path as xs:string, $params as map) {
 	let $collection := xs:anyURI($root || "/" || $model)
 	return
 		if($method = "GET") then
-			if($qstr = "" and $id != "") then
+			if($query-string = "" and $id != "") then
 				rst:get($collection,$id,$params)
 			else 
 				rst:query($collection,$query-string,$params)
