@@ -2,6 +2,7 @@ xquery version "3.0";
 
 (:
  * This module provides an interface that normalizes to Dojo/Persevere-style REST functions
+ * Currently this modules forces JSON output
  :)
 
 module namespace rst="http://lagua.nl/lib/rst";
@@ -9,6 +10,11 @@ module namespace rst="http://lagua.nl/lib/rst";
 declare namespace request="http://exist-db.org/xquery/request";
 declare namespace response="http://exist-db.org/xquery/response";
 import module namespace xqjson="http://xqilla.sourceforge.net/lib/xqjson";
+
+declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
+declare option output:method "json";
+declare option output:media-type "application/json";
+
 
 (:  the main function to call from a controller :)
 declare function rst:process($path as xs:string, $params as map) {
