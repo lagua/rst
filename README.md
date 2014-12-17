@@ -1,7 +1,7 @@
 rst
 ====
 
-RST: An XML/JSON CRUD normalizer for RESTXQ
+RST: An XML/JSON CRUD normalizer written in xquery for Dojo-style REST functionality
 
 Test with eXist:
 --------
@@ -76,10 +76,16 @@ declare function service:delete($collection as xs:anyURI, $id as xs:string) {
 	xmldb:remove($collection, $id || ".xml")
 };
 ```
-Dream
-=====
 
-Currently RESTXQ neither allows for regular expressions in path annotations to deal with slashes in ids, nor does it take parameters, so unfortunately this library is still a dream. It would be cool if you could do this in the standard eXist-db controller.xql:
+Tst
+===
+
+To see how to setup this library to be actually used in eXist, build the app in the test directory and install it via the package manager.  
+
+RESTXQ
+======
+
+It would be nice to process RST with RESTXQ. However, currently RESTXQ neither allows for regular expressions in path annotations to deal with slashes in ids, nor does it take parameters, so unfortunately using this library together with RESTXQ is still a dream. It would be cool if you could do this in the standard eXist-db controller.xql:
 
 ```xquery
 if(matches(exist:path,"^/service")) then
