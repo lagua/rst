@@ -63,34 +63,34 @@ declare function rst:process($path as xs:string, $params as map) {
 			)
 };
 
-declare function rst:get(collection as xs:anyURI,$id as xs:string,$params as map) {
+declare function rst:get($collection as xs:anyURI,$id as xs:string,$params as map) {
 	let $module := rst:import-module($params)
 	let $fn := function-lookup(xs:QName($params("module-prefix") || ":get"), 3)
-	return $fn(collection,$id,$params)
+	return $fn($collection,$id,$params)
 };
 
-declare function rst:query(collection as xs:anyURI,$query-string as xs:string,$params as map) {
+declare function rst:query($collection as xs:anyURI,$query-string as xs:string,$params as map) {
 	let $module := rst:import-module($params)
 	let $fn := function-lookup(xs:QName($params("module-prefix") || ":query"), 3)
-	return $fn(collection,$query-string,$params)
+	return $fn($collection,$query-string,$params)
 };
 
-declare function rst:put(collection as xs:anyURI,$data as node(),$params as map) {
+declare function rst:put($collection as xs:anyURI,$data as node(),$params as map) {
 	let $module := rst:import-module($params)
 	let $fn := function-lookup(xs:QName($params("module-prefix") || ":put"), 3)
-	return $fn(collection,$data,$params)
+	return $fn($collection,$data,$params)
 };
 
-declare function rst:delete(collection as xs:anyURI,$id as xs:string,$params as map) {
+declare function rst:delete($collection as xs:anyURI,$id as xs:string,$params as map) {
 	let $module := rst:import-module($params)
 	let $fn := function-lookup(xs:QName($params("module-prefix") || ":delete"), 3)
-	return $fn(collection,$id,$params)
+	return $fn($collection,$id,$params)
 };
 
 declare function rst:custom($collection as xs:anyURI,$id as xs:string,$data as node(),$params as map) {
 	let $module := rst:import-module($params)
-	let $fn := function-lookup(xs:QName($params("module-prefix") || ":" || $data/*[name() = ("method","function")), 4)
-	return $fn(collection,$id,$data,$params)
+	let $fn := function-lookup(xs:QName($params("module-prefix") || ":" || $data/*[name() = ("method","function")]), 4)
+	return $fn($collection,$id,$data,$params)
 };
 
 declare function rst:import-module($params as map) {
