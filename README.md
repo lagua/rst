@@ -76,6 +76,8 @@ declare function service:delete($collection as xs:anyURI, $id as xs:string) {
 	xmldb:remove($collection, $id || ".xml")
 };
 ```
+Dream
+=====
 
 Currently RESTXQ doesn't take parameters, so unfortunately this library is still a dream. It would be cool if you could do this in the standard eXist-db controller.xql:
 
