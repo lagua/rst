@@ -9,6 +9,7 @@ module namespace rst="http://lagua.nl/lib/rst";
 
 declare namespace request="http://exist-db.org/xquery/request";
 declare namespace response="http://exist-db.org/xquery/response";
+import module namespace json="http://www.json.org";
 import module namespace xqjson="http://xqilla.sourceforge.net/lib/xqjson";
 
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
