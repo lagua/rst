@@ -24,7 +24,7 @@ This departs from some other concepts, where path fragments are used to denote s
 specific functionality on the data-set or even unrelated data.
 * The functions that used for CRUD on the client-side are mirrored on the server-side. These are: 
 get, query, put, and delete.
-* In addition, contents may be posted that trigger custom functionality, either on a specific resource 
+* In addition, contents may be posted that triggers custom functionality, either on a specific resource 
 or the entire collection.
 
 Please note that this library DOES NOT actually perform any of these actions! It merely provides 
