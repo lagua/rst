@@ -44,16 +44,18 @@ An example library module that will be consumed by rst could be this:
 ```xquery
 xquery version "3.0";
 
-declare function rst:get($collection as xs:anyURI,$id as xs:string) {
+declare module namespace service="http://my/services/simple";
+
+declare function service:get($collection as xs:anyURI,$id as xs:string) {
 	doc($collection || "/" || $id || ".xml")
 };
 
-declare function rst:query($collection as xs:anyURI, $query-string as xs:string, $directives as map) {
+declare function service:query($collection as xs:anyURI, $query-string as xs:string, $directives as map) {
 	(: just return the collection in this example :)
 	collection($collection)
 };
 
-declare function rst:put($collection as xs:anyURI,$data as node(), $directives as map) {
+declare function service:put($collection as xs:anyURI,$data as node(), $directives as map) {
 	(: just use 'id' as primary key: this is also the key in $directives :)
 	let $id := $data/id/string()
 	let $id :=
@@ -70,9 +72,24 @@ declare function rst:put($collection as xs:anyURI,$data as node(), $directives a
 	return xmldb:store($collection,$id || ".xml", $data) 
 };
 
-declare function rst:delete($collection as xs:anyURI, $id as xs:string) {
+declare function service:delete($collection as xs:anyURI, $id as xs:string) {
 	xmldb:remove($collection, $id || ".xml")
 };
+```
+
+Currently RESTXQ doesn't take parameters, so unfortunately this library is still a dream. It would be cool if you could do this in the standard eXist-db controller.xql:
+
+```xquery
+if(matches(exist:path,"^/service")) then
+	let $funcs := util:list-functions("http://lagua.nl/lib/rst")
+    	let $login := $login("org.exist.login", (), true())
+    	let $params := map {
+    		"loc" => "/db/apps/my/service.xql"
+    		"prefix" => "service",
+    		"uri" => "http://my/services/simple",
+    		"id-property" => "id"
+    	}
+	return restxq:process(replace(exist:path,"^/service/(.*)$","$1"),$funcs,$params)
 ```
 
 A much more complete standard library will be provided by the next version of https://github.com/lagua/xmdl. 
