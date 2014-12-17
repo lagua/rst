@@ -18,7 +18,7 @@ While working on projects with [Dojo Toolkit](http://dojotoolkit.org), it became
 of what REST is and should be is quite concise. The client library has been developed in tandem with 
 [Persevere](http://persvr.org), a Dojo Foundation project for the server. It follows these principles:
 
-* A target path is considered to be /path/to/collection
+* A target path (from a REST perspective) is considered to be /path/to/collection
 * The entire path following the collection is considered to be an id, and may contain slashes. 
 This departs from some other concepts, where path fragments are used to denote subsets of the data-model, 
 specific functionality on the data-set or even unrelated data.
