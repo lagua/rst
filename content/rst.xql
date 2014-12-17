@@ -58,7 +58,7 @@ declare function rst:process($path as xs:string, $params as map) {
 		else
 			(: json-friendly error :)
 			(
-				response:set-status(405),
+				response:set-status-code(405),
 				<json:value>Error: Method not implemented</json:value>
 			)
 };
