@@ -87,7 +87,8 @@ if(matches(exist:path,"^/service")) then
     		"loc" => "/db/apps/my/service.xql"
     		"prefix" => "service",
     		"uri" => "http://my/services/simple",
-    		"id-property" => "id"
+    		"id-property" => "id",
+    		"root-collection" => "/db/my/data"
     	}
 	return restxq:process(replace(exist:path,"^/service/(.*)$","$1"),$funcs,$params)
 ```
