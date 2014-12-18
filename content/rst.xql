@@ -12,18 +12,23 @@ declare namespace response="http://exist-db.org/xquery/response";
 import module namespace json="http://www.json.org";
 import module namespace xqjson="http://xqilla.sourceforge.net/lib/xqjson";
 
-declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
-declare option output:method "json";
-declare option output:media-type "application/json";
-
-(:  the main function to call from a controller :)
-declare function rst:process($path as xs:string, $params as map) {
-	let $model := replace($path, "^/*([^/]+)/.*", "$1")
-	let $id := replace($path, "^/*[^/]+(.*)", "$1")
+declare function rst:process($path as xs:string, $params as map) {'
 	let $method := request:get-method()
 	let $query-string := string(request:get-query-string())
 	let $content-type := request:get-header("content-type")
 	let $accept := request:get-header("accept")
+	let $data :=
+		if($method = ("PUT","POST")) then
+			request:get-data()
+		else
+			()
+	return rst:process($path, $params, $query-string, $method, $data, $content-type, $accept)
+}
+
+(:  the main function to call from a controller :)
+declare function rst:process($path as xs:string, $params as map, $query-string as xs:string, $method as xs:string, $data, $content-type, $accept) {
+	let $model := replace($path, "^/*([^/]+)/.*", "$1")
+	let $id := replace($path, "^/*[^/]+(.*)", "$1")
 	let $root := $params("root-collection")
 	(: TODO choose default root :)
 	let $collection := xs:anyURI($root || "/" || $model)
@@ -35,7 +40,6 @@ declare function rst:process($path as xs:string, $params as map) {
 				rst:query($collection,$query-string,$params)
 		else if($method=("PUT","POST")) then
 			(: assume data :)
-			let $data := request:get-data()
 			let $data := 
 				if(matches($content-type,"application/[json|javascript]")) then
 					let $data :=
