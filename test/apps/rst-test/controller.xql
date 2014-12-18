@@ -60,12 +60,12 @@ declare function local:fallback-login($domain as xs:string, $path as xs:string, 
 };
 
 if(starts-with($exist:path,"/model")) then
-    let $params := subsequence(tokenize($exist:path,"/"), 3)
+    let $params := subsequence(tokenize($exist:path,"/"), 2)
     let $path := string-join($params,"/")
     let $module-uri := "http://lagua.nl/rst-test/services/simple"
     let $module-prefix := "service"
-    let $module-location := $exist:controller || "/modules/service.xql"
-    let $root-collection := $exist:controller || "/data"
+    let $module-location := "/db/apps/rst-test/modules/service.xql"
+    let $root-collection := "/db/apps/rst-test/data"
     return
     	<dispatch xmlns="http://exist.sourceforge.net/NS/exist">
 			<forward url="{$exist:controller}/modules/model.xql">

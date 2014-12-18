@@ -1,8 +1,8 @@
 xquery version "3.0";
 
-declare module namespace service="http://lagua.nl/services/simple";
+module namespace service="http://lagua.nl/rst-test/services/simple";
 
-declare function service:get($collection as xs:anyURI,$id as xs:string) {
+declare function service:get($collection as xs:anyURI,$id as xs:string, $directives as map) {
 	doc($collection || "/" || $id || ".xml")
 };
 
