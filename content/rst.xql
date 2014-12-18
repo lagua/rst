@@ -12,7 +12,7 @@ declare namespace response="http://exist-db.org/xquery/response";
 import module namespace json="http://www.json.org";
 import module namespace xqjson="http://xqilla.sourceforge.net/lib/xqjson";
 
-declare function rst:process($path as xs:string, $params as map) {'
+declare function rst:process($path as xs:string, $params as map) {
 	let $method := request:get-method()
 	let $query-string := string(request:get-query-string())
 	let $content-type := request:get-header("content-type")
@@ -23,7 +23,7 @@ declare function rst:process($path as xs:string, $params as map) {'
 		else
 			()
 	return rst:process($path, $params, $query-string, $method, $data, $content-type, $accept)
-}
+};
 
 (:  the main function to call from a controller :)
 declare function rst:process($path as xs:string, $params as map, $query-string as xs:string, $method as xs:string, $data, $content-type, $accept) {
