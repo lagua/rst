@@ -16,7 +16,6 @@ declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare option output:method "json";
 declare option output:media-type "application/json";
 
-
 (:  the main function to call from a controller :)
 declare function rst:process($path as xs:string, $params as map) {
 	let $model := replace($path, "^/*([^/]+)/.*", "$1")
@@ -101,7 +100,7 @@ declare function rst:import-module($params as map) {
 	return util:import-module($uri, $prefix, $location)
 };
 
-declare function rst:to-plain-xml($node as element()) as element()* {
+declare %private function rst:to-plain-xml($node as element()) as element()* {
 	let $name := string(node-name($node))
 	let $name :=
 		if($name = "json") then
