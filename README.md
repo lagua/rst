@@ -1,5 +1,7 @@
-RST: CRUD mask for REST written in Xquery
-====
+RST
+===
+
+CRUD mask for REST written in Xquery
 
 To install in eXist-db:
 --------------------
