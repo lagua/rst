@@ -85,21 +85,10 @@ To see how to setup this library to be actually used in eXist, build the app in 
 RESTXQ
 ======
 
-It would be nice to process RST with RESTXQ. However, currently RESTXQ neither allows for regular expressions in path annotations to deal with slashes in ids, nor does it take parameters, so unfortunately using this library together with RESTXQ is still a dream. It would be cool if you could do this in the standard eXist-db controller.xql:
+It would be nice to process RST with RESTXQ. However, currently RESTXQ doesn't allow for regular expressions in path annotations. So unfortunately using this library together with RESTXQ is still pending. See the https://github.com/lagua/xrst/blob/master/test/apps/rst-test/modules/rstxq.xql in the test app for annotation examples.
 
-```xquery
-if(matches(exist:path,"^/service")) then
-	let $funcs := util:list-functions("http://lagua.nl/lib/rst")
-    	let $login := $login("org.exist.login", (), true())
-    	let $params := map {
-    		"loc" => "/db/apps/my/service.xql"
-    		"prefix" => "service",
-    		"uri" => "http://my/services/simple",
-    		"id-property" => "id",
-    		"root-collection" => "/db/my/data"
-    	}
-	return restxq:process(replace(exist:path,"^/service/(.*)$","$1"),$funcs,$params)
-```
 
+JSON Modeling with JSON Schema and querying with RQL
+====================================================
 A much more complete standard library will be provided by the next version of https://github.com/lagua/xmdl. 
 It will use https://github.com/lagua/xrql as its main query processor.
