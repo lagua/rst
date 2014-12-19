@@ -24,7 +24,7 @@ of what REST is and should be is quite concise. The client library has been deve
 * The entire path following the collection is considered to be an id, and may contain slashes. 
 This departs from some other concepts, where path fragments are used to denote subsets of the data-model, 
 specific functionality on the data-set or even unrelated data.
-* The functions that used for CRUD on the client-side are mirrored on the server-side. These are: 
+* The functions that are used for CRUD on the client-side are mirrored on the server-side. These are: 
 get, query, put, and delete.
 * In addition, contents may be posted that triggers custom functionality, either on a specific resource 
 or the entire collection.
