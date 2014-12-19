@@ -74,7 +74,7 @@ declare function service:put($collection as xs:anyURI,$data as node(), $directiv
 	return xmldb:store($collection,$id || ".xml", $data) 
 };
 
-declare function service:delete($collection as xs:anyURI, $id as xs:string) {
+declare function service:delete($collection as xs:anyURI, $id as xs:string, $directives as map) {
 	xmldb:remove($collection, $id || ".xml")
 };
 ```
