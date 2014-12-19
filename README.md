@@ -1,12 +1,10 @@
-rst
+RST: CRUD mask for REST written in Xquery
 ====
 
-RST: CRUD mask for REST written in Xquery
+To install in eXist-db:
+--------------------
 
-Test with eXist:
---------
-
-Download and install eXist 2.x @ http://exist-db.org
+Download and install eXist-db 2.2 at http://exist-db.org
 
 Build the package and install into eXist using the manager in the dashboard.
 
