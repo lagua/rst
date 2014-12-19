@@ -1,7 +1,7 @@
 rst
 ====
 
-RST: An XML/JSON CRUD normalizer written in xquery for Dojo-style REST functionality
+RST: CRUD mask for REST written in Xquery
 
 Test with eXist:
 --------
@@ -12,7 +12,9 @@ Build the package and install into eXist using the manager in the dashboard.
 
 --------
 
-Why normalize?
+Why a CRUD mask for REST?
+
+RST provides a standard way to handle CRUD functionality, so you don't need to concern yourself with HTTP methods, content negotiation and architectural decisions. The standard that this library provides is developed within the javascript community.
 
 While working on projects with [Dojo Toolkit](http://dojotoolkit.org), it became clear to me that the Dojo concept 
 of what REST is and should be is quite concise. The client library has been developed in tandem with 
