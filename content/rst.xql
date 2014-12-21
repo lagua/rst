@@ -59,7 +59,12 @@ declare function rst:process($path as xs:string, $directives as map, $query as i
 			return
 				(: this launches a custom method :)
 				if($method = "POST" and exists($data[method])) then
-					rst:rpc($collection,$id,$data/params,$directives)
+					let $target := concat(
+						$collection,
+						if($id) then "/" else "",
+						$id
+					)
+					return rst:rpc($target,$data/method/string(),$data/params,$data/id/string(),$directives)
 				else
 					rst:put($collection,$data,$directives)
 		else if($method = "DELETE") then
@@ -67,29 +72,29 @@ declare function rst:process($path as xs:string, $directives as map, $query as i
 		else
 			<http:response status="405" message="Method not implemented"/>
 	let $output := (
-	    util:declare-option("output:method", "json"),
-        util:declare-option("output:media-type", "application/json")
+		util:declare-option("output:method", "json"),
+		util:declare-option("output:media-type", "application/json")
 	)
 	return
 		if(name($response[1]) = "http:response") then
 			(: expect custom response :)
 			if($directives("from-controller")) then
-			    (: parse http:response entry :)
-			    (
-    			    if($response[1]/@status) then
-    			        response:set-status-code($response[1]/@status)
-    			    else
-    			        (),
-    			    for $header in $response[1]/http:header return 
-    			        response:set-header($header/@name,$header/@value)
-    			    ,
-    		        remove($response,1)
-		        )
-            else
-                (<rest:response>{$response[1]}</rest:response>,
-                remove($response,1))
-        else
-	        $response
+				(: parse http:response entry :)
+				(
+					if($response[1]/@status) then
+						response:set-status-code($response[1]/@status)
+					else
+						(),
+					for $header in $response[1]/http:header return 
+						response:set-header($header/@name,$header/@value)
+					,
+					remove($response,1)
+				)
+			else
+				(<rest:response>{$response[1]}</rest:response>,
+				remove($response,1))
+		else
+			$response
 };
 
 declare function rst:get($collection as xs:string,$id as xs:string,$directives as map) {
@@ -116,12 +121,28 @@ declare function rst:delete($collection as xs:string,$id as xs:string,$directive
 	return $fn($collection,$id,$directives)
 };
 
-declare function rst:rpc($collection as xs:string,$id as xs:string,$params as node()*,$directives as map) {
+declare function rst:rpc($target as xs:string,$method as xs:string,$params as node()*,$id as xs:string,$directives as map) {
 	let $module := rst:import-module($directives)
-	let $arity := count($params) + 2
-	let $fn := function-lookup(xs:QName($directives("module-prefix") || ":" || $data/*[name() = ("method","function")]), $arity)
-	let $args := insert-before(insert-before($directives,0,$params),0,$collection || "/" || $id)
-	return util:call($fn,$args)
+	let $arity := count($params)
+	let $fn := function-lookup(xs:QName($directives("module-prefix") || ":" || $method), $arity + 3)
+	return
+		switch($arity)
+			case 1 return
+				$fn($target,$params[1],$id,$directives)
+			case 2 return
+				$fn($target,$params[1],$params[2],$id,$directives)
+			case 3 return
+				$fn($target,$params[1],$params[2],$params[2],$id,$directives)
+			case 4 return
+				$fn($target,$params[1],$params[2],$params[3],$params[4],$id,$directives)
+			case 5 return
+				$fn($target,$params[1],$params[2],$params[3],$params[4],$params[5],$id,$directives)
+			case 6 return
+				$fn($target,$params[1],$params[2],$params[3],$params[4],$params[5],$params[6],$id,$directives)
+			case 7 return
+				$fn($target,$params[1],$params[2],$params[3],$params[4],$params[5],$params[6],$params[6],$id,$directives)
+			default return
+				$fn($target,$id,$directives)
 };
 
 declare function rst:import-module($directives as map) {
