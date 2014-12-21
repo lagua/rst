@@ -41,23 +41,23 @@ An optional parameter defines the primary identifier for storing the resource.
 If that is not specified, the id may be auto-generated. The created/updated resource should be returned.
 * `delete` deletes the resources with the given identifier from the collection.
 
-An example library module that will be consumed by rst could be this:
+An example CRUD library module that will be consumed by rst could be this:
 
 ```xquery
 xquery version "3.0";
 
 declare module namespace service="http://my/services/simple";
 
-declare function service:get($collection as xs:anyURI,$id as xs:string, $directives as map) {
+declare function service:get($collection as xs:string,$id as xs:string, $directives as map) {
 	doc($collection || "/" || $id || ".xml")
 };
 
-declare function service:query($collection as xs:anyURI, $query as xs:anyType, $directives as map) {
+declare function service:query($collection as xs:string, $query as xs:anyType, $directives as map) {
 	(: just return the collection in this example :)
 	collection($collection)
 };
 
-declare function service:put($collection as xs:anyURI,$data as node(), $directives as map) {
+declare function service:put($collection as xs:string,$data as node(), $directives as map) {
 	(: just use 'id' as primary key: this is also the key in $directives :)
 	let $id := $data/id/string()
 	let $id :=
@@ -74,7 +74,7 @@ declare function service:put($collection as xs:anyURI,$data as node(), $directiv
 	return xmldb:store($collection,$id || ".xml", $data) 
 };
 
-declare function service:delete($collection as xs:anyURI, $id as xs:string, $directives as map) {
+declare function service:delete($collection as xs:string, $id as xs:string, $directives as map) {
 	xmldb:remove($collection, $id || ".xml")
 };
 ```
@@ -82,7 +82,13 @@ declare function service:delete($collection as xs:anyURI, $id as xs:string, $dir
 Testing
 =======
 
-To see how to setup this library to be actually used in eXist, build the app in the test directory and install it via the package manager.  
+To see how to setup this library to be actually used in eXist, build the app in the test directory and install it via the package manager. 
+
+JSON-RPC
+========
+
+TODO
+
 
 RESTXQ
 ======
