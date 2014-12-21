@@ -1,7 +1,7 @@
 RST
 ===
 
-CRUD mask for REST written in Xquery
+JSON CRUD and RPC mask for REST written in Xquery
 
 To install in eXist-db:
 --------------------
