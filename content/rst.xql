@@ -12,42 +12,47 @@ declare namespace response="http://exist-db.org/xquery/response";
 import module namespace json="http://www.json.org";
 import module namespace xqjson="http://xqilla.sourceforge.net/lib/xqjson";
 
+(:  the main function to call from the controller :)
 declare function rst:process($path as xs:string, $params as map) {
-	let $method := request:get-method()
-	let $query-string := string(request:get-query-string())
-	let $content-type := request:get-header("content-type")
-	let $accept := request:get-header("accept")
-	let $data :=
-		if($method = ("PUT","POST")) then
-			request:get-data()
-		else
-			()
-	return rst:process($path, $params, $query-string, $method, $data, $content-type, $accept)
+	let $query := map { "string" := string(request:get-query-string()) }
+	return rst:process($path, $params, $query)
 };
 
-(:  the main function to call from a controller :)
-declare function rst:process($path as xs:string, $params as map, $query-string as xs:string, $method as xs:string, $data, $content-type, $accept) {
-	let $model := replace($path, "^/*([^/]+)/.*", "$1")
-	let $id := replace($path, "^/*[^/]+(.*)", "$1")
+(:  function to call from the controller, override query :)
+declare function rst:process($path as xs:string, $params as map, $query as map) {
+	let $params := map:new(($params, map { "from-controller" := true() }))
+	let $method := request:get-method()
+	let $content-type := string(request:get-header("content-type"))
+	let $accept := string(request:get-header("accept"))
+	let $data :=
+		if($method = ("PUT","POST")) then
+			string(request:get-data())
+		else
+			()
+	return rst:process($path, $params, $query, $content-type, $accept, $data, $method)
+};
+
+(:  the main function to call from RESTXQ :)
+declare function rst:process($path as xs:string, $params as map, $query as map, $content-type as xs:string, $accept as xs:string, $data as item()*, $method as xs:string) {
+	let $model := replace($path, "^/?([^/]+).*", "$1")
+	let $id := replace($path, "^/?" || $model || "/(.*)", "$1")
 	let $root := $params("root-collection")
 	(: TODO choose default root :)
-	let $collection := xs:anyURI($root || "/" || $model)
-	return
+	let $collection := $root || "/" || $model
+	let $response :=
 		if($method = "GET") then
-			if($query-string = "" and $id != "") then
+			if($id) then
 				rst:get($collection,$id,$params)
 			else 
-				rst:query($collection,$query-string,$params)
+				rst:query($collection,$query,$params)
 		else if($method=("PUT","POST")) then
 			(: assume data :)
 			let $data := 
 				if(matches($content-type,"application/[json|javascript]")) then
-					let $data :=
-						if(string($data) != "") then
-							$data
-						else
-							"{}"
-					return rst:to-plain-xml(xqjson:parse-json($data))
+					if($data) then
+						rst:to-plain-xml(xqjson:parse-json(util:binary-to-string($data)))
+					else
+						<root/>
 				else
 					(:  bdee bdee bdatsallfolks :)
 					$data
@@ -60,38 +65,58 @@ declare function rst:process($path as xs:string, $params as map, $query-string a
 		else if($method = "DELETE") then
 			rst:delete($collection,$id,$params)
 		else
-			(: json-friendly error :)
-			(
-				response:set-status-code(405),
-				<json:value>Error: Method not implemented</json:value>
-			)
+			<http:response status="405" message="Method not implemented"/>
+	let $output := (
+	    util:declare-option("output:method", "json"),
+        util:declare-option("output:media-type", "application/json")
+	)
+	return
+		if(name($response[1]) = "http:response") then
+			(: expect custom response :)
+			if($params("from-controller")) then
+			    (: parse http:response entry :)
+			    (
+    			    if($response[1]/@status) then
+    			        response:set-status-code($response[1]/@status)
+    			    else
+    			        (),
+    			    for $header in $response[1]/http:header return 
+    			        response:set-header($header/@name,$header/@value)
+    			    ,
+    		        remove($response,1)
+		        )
+            else
+                (<rest:response>{$response[1]}</rest:response>,
+                remove($response,1))
+        else
+	        $response
 };
 
-declare function rst:get($collection as xs:anyURI,$id as xs:string,$params as map) {
+declare function rst:get($collection as xs:string,$id as xs:string,$params as map) {
 	let $module := rst:import-module($params)
 	let $fn := function-lookup(xs:QName($params("module-prefix") || ":get"), 3)
 	return $fn($collection,$id,$params)
 };
 
-declare function rst:query($collection as xs:anyURI,$query-string as xs:string,$params as map) {
+declare function rst:query($collection as xs:string,$query as map,$params as map) {
 	let $module := rst:import-module($params)
 	let $fn := function-lookup(xs:QName($params("module-prefix") || ":query"), 3)
-	return $fn($collection,$query-string,$params)
+	return $fn($collection,$query,$params)
 };
 
-declare function rst:put($collection as xs:anyURI,$data as node(),$params as map) {
+declare function rst:put($collection as xs:string,$data as node(),$params as map) {
 	let $module := rst:import-module($params)
 	let $fn := function-lookup(xs:QName($params("module-prefix") || ":put"), 3)
 	return $fn($collection,$data,$params)
 };
 
-declare function rst:delete($collection as xs:anyURI,$id as xs:string,$params as map) {
+declare function rst:delete($collection as xs:string,$id as xs:string,$params as map) {
 	let $module := rst:import-module($params)
 	let $fn := function-lookup(xs:QName($params("module-prefix") || ":delete"), 3)
 	return $fn($collection,$id,$params)
 };
 
-declare function rst:custom($collection as xs:anyURI,$id as xs:string,$data as node(),$params as map) {
+declare function rst:custom($collection as xs:string,$id as xs:string,$data as node(),$params as map) {
 	let $module := rst:import-module($params)
 	let $fn := function-lookup(xs:QName($params("module-prefix") || ":" || $data/*[name() = ("method","function")]), 4)
 	return $fn($collection,$id,$data,$params)
