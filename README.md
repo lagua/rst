@@ -52,7 +52,7 @@ declare function service:get($collection as xs:string,$id as xs:string, $directi
 	doc($collection || "/" || $id || ".xml")
 };
 
-declare function service:query($collection as xs:string, $query as xs:anyType, $directives as map) {
+declare function service:query($collection as xs:string, $query as item()*, $directives as map) {
 	(: just return the collection in this example :)
 	collection($collection)
 };
