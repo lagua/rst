@@ -34,6 +34,11 @@ declare function rst:process($path as xs:string, $directives as map, $query as i
 
 (:  the main function to call from RESTXQ :)
 declare function rst:process($path as xs:string, $directives as map, $query as item()*, $content-type as xs:string, $accept as xs:string, $data as item()*, $method as xs:string) {
+	let $directives := 
+		if(map:contains($directives,"id-property")) then
+			$directives
+		else
+			map:new(($directives, map { "id-property" := "id" }))
 	let $model := replace($path, "^/?([^/]+).*", "$1")
 	let $id := replace($path, "^/?" || $model || "/(.*)", "$1")
 	let $root := $directives("root-collection")
