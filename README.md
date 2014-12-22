@@ -41,7 +41,7 @@ An optional parameter defines the primary identifier for storing the resource.
 If that is not specified, the id may be auto-generated. The created/updated resource should be returned.
 * `delete` deletes the resources with the given identifier from the collection.
 
-An example CRUD library module that will be consumed by rst could be this:
+An example CRUD library module that will be used by RST could be this:
 
 ```xquery
 xquery version "3.0";
