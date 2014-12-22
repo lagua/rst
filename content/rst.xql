@@ -83,21 +83,31 @@ declare function rst:process($path as xs:string, $directives as map, $query as i
 	return
 		if(name($response[1]) = "http:response") then
 			(: expect custom response :)
-			if($directives("from-controller")) then
-				(: parse http:response entry :)
-				(
-					if($response[1]/@status) then
-						response:set-status-code($response[1]/@status)
-					else
-						(),
-					for $header in $response[1]/http:header return 
-						response:set-header($header/@name,$header/@value)
-					,
-					remove($response,1)
-				)
-			else
-				(<rest:response>{$response[1]}</rest:response>,
-				remove($response,1))
+			let $http-response := $response[1]
+			let $result := remove($response,1)
+			return
+				if($directives("from-controller")) then
+					(: parse http:response entry :)
+					(
+						if($http-response/@status) then
+							response:set-status-code($http-response/@status)
+						else
+							(),
+						for $header in $http-response/http:header return 
+							response:set-header($header/@name,$header/@value),
+						if($result) then
+							$result
+						else
+							element response {
+								$http-response/@message/string(),
+								$http-response/message/string()
+							}
+					)
+				else
+					(
+						<rest:response>{$http-response}</rest:response>,
+						$result
+					)
 		else
 			$response
 };
