@@ -170,23 +170,26 @@ declare %private function rst:to-plain-xml($node as element()) as item()* {
 			$name
 	return
 		if($node[@type = "array"]) then
+		   for $item in $node/node() return
 			element {$name} {
 				attribute {"json:array"} {"true"},
-				for $child in $node/node() return
-					if($child instance of element()) then
-						rst:to-plain-xml($child)
-					else
-						$child
+				rst:to-plain-xml($item)
 			}
-		else if($name="json:value" and empty($node/*)) then
-			(if($node/@type = ("number","boolean")) then
-				attribute {"json:literal"} {"true"}
+		else if($name="json:value") then
+			if(empty($node/*)) then
+				(if($node/@type = ("number","boolean")) then
+					attribute {"json:literal"} {"true"}
+				else
+					(),
+				$node/string())
 			else
-				(),
-			$node/string())
+			   for $item in $node/node() return
+					rst:to-plain-xml($item)
 		else
 			element {$name} {
-				if($node/@type = ("number","boolean")) then
+				if($node/@type = "array") then
+					attribute {"json:array"} {"true"}
+				else if($node/@type = ("number","boolean")) then
 					attribute {"json:literal"} {"true"}
 				else
 					(),
