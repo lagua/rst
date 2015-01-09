@@ -34,6 +34,7 @@ declare function rst:process($path as xs:string, $directives as map, $query as i
 
 (:  the main function to call from RESTXQ :)
 declare function rst:process($path as xs:string, $directives as map, $query as item()*, $content-type as xs:string, $accept as xs:string, $data as item()*, $method as xs:string) {
+	(: TODO check if all properties are available, if not throw error :)
 	let $directives := 
 		if(map:contains($directives,"id-property")) then
 			$directives
