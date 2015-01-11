@@ -30,7 +30,7 @@ get, query, put, and delete.
 or the entire collection.
 
 Please note that this library DOES NOT actually perform any of these actions! It merely provides 
-an intermediary step between RESTXQ and another library that takes care of the actual database manipulation.
+an intermediary step between your app and a library that takes care of the actual database manipulation.
 
 The core functions perform the following actions (largely taken from https://github.com/persvr/perstore):
 
@@ -78,6 +78,8 @@ declare function service:delete($collection as xs:string, $id as xs:string, $dir
 	xmldb:remove($collection, $id || ".xml")
 };
 ```
+
+To hook up RST to your library module you can configure it in the controller.xql of your app or a RESTXQ module. You also have to store some basic settings in your app's config file. Take a look at the sample app in the test directory.
 
 Testing
 =======
