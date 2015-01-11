@@ -14,12 +14,11 @@ import module namespace xqjson="http://xqilla.sourceforge.net/lib/xqjson";
 
 (:  the main function to call from the controller :)
 declare function rst:process($path as xs:string, $directives as map) {
-	let $query := string(request:get-query-string())
-	return rst:process($path, $directives, $query)
+	rst:process($path, $directives, string(request:get-query-string()))
 };
 
 (:  function to call from the controller, override query :)
-declare function rst:process($path as xs:string, $directives as map, $query as item()*) {
+declare function rst:process($path as xs:string, $directives as map, $query-string as xs:string) {
 	let $directives := map:new(($directives, map { "from-controller" := true() }))
 	let $method := request:get-method()
 	let $content-type := string(request:get-header("content-type"))
@@ -29,11 +28,11 @@ declare function rst:process($path as xs:string, $directives as map, $query as i
 			string(request:get-data())
 		else
 			()
-	return rst:process($path, $directives, $query, $content-type, $accept, $data, $method)
+	return rst:process($path, $directives, $query-string, $content-type, $accept, $data, $method)
 };
 
 (:  the main function to call from RESTXQ :)
-declare function rst:process($path as xs:string, $directives as map, $query as item()*, $content-type as xs:string, $accept as xs:string, $data as item()*, $method as xs:string) {
+declare function rst:process($path as xs:string, $directives as map, $query-string as xs:string, $content-type as xs:string, $accept as xs:string, $data as item()*, $method as xs:string) {
 	(: TODO check if all properties are available, if not throw error :)
 	let $directives := 
 		if(map:contains($directives,"id-property")) then
@@ -47,10 +46,10 @@ declare function rst:process($path as xs:string, $directives as map, $query as i
 	let $collection := $root || "/" || $model
 	let $response :=
 		if($method = "GET") then
-			if($id) then
+			if($query-string eq "" and $id ne "") then
 				rst:get($collection,$id,$directives)
 			else 
-				rst:query($collection,$query,$directives)
+				rst:query($collection,$query-string,$directives)
 		else if($method=("PUT","POST")) then
 			(: assume data :)
 			let $data := 
@@ -119,10 +118,10 @@ declare function rst:get($collection as xs:string,$id as xs:string,$directives a
 	return $fn($collection,$id,$directives)
 };
 
-declare function rst:query($collection as xs:string,$query as item()*,$directives as map) {
+declare function rst:query($collection as xs:string,$query-string as xs:string,$directives as map) {
 	let $module := rst:import-module($directives)
 	let $fn := function-lookup(xs:QName($directives("module-prefix") || ":query"), 3)
-	return $fn($collection,$query,$directives)
+	return $fn($collection,$query-string,$directives)
 };
 
 declare function rst:put($collection as xs:string,$data as node(),$directives as map) {
