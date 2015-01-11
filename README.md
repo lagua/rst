@@ -98,5 +98,5 @@ It would be nice to process RST with RESTXQ. However, currently RESTXQ doesn't a
 
 JSON Modeling with JSON Schema and querying with RQL
 ====================================================
-A much more complete standard library will be provided by the next version of https://github.com/lagua/xmdl. 
-It will use https://github.com/lagua/xrql as its main query processor.
+A much more complete standard library will be provided by the next version of https://github.com/wshager/xmdl. 
+It will use https://github.com/wshager/xrql as its main query processor.
