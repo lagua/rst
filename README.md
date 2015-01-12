@@ -12,27 +12,18 @@ Build the package and install into eXist using the manager in the dashboard.
 
 --------
 
-Why a CRUD mask for REST?
+RST abstracts HTTP methods and content negotiation, as to provide a standard architecture (best practices) for REST functionality. It implements the following patterns:
 
-RST provides a standard way to handle CRUD and JSON-RPC functionality, so you don't need to concern yourself with HTTP methods, content negotiation and architectural decisions. The standard that this library embraces has been developed within the javascript community.
-
-While working on projects with [Dojo Toolkit](http://dojotoolkit.org), it became clear to me that the Dojo concept 
-of what REST is and should be is quite concise. The client library has been developed in tandem with 
-[Persevere](http://persvr.org), a Dojo Foundation project for the server. It follows these principles:
-
-* A target path (from a REST perspective) is considered to be /path/to/collection
-* The entire path following the collection is considered to be an id, and may contain slashes. 
+* Model: A target path (from a REST perspective) is considered to be /path/to/collection
+* Identity: The entire path following the collection is considered to be an id, and may contain slashes. 
 This departs from some other concepts, where path fragments are used to denote subsets of the data-model, 
-specific functionality on the data-set or even unrelated data.
-* The functions that are used for CRUD on the client-side are mirrored on the server-side. These are: 
-get, query, put, and delete.
-* In addition, contents may be posted that triggers custom functionality (JSON-RPC), either on a specific resource 
-or the entire collection.
+specific functionality on the data-set or related data.
+* CRUD: A standard set of functions to request and modify data: get, query, put, and delete.
+* JSON-RPC: contents may be posted that triggers custom functionality, either on a specific resource or the entire collection. It can be seen as a simplified XML-RPC.
 
-Please note that this library DOES NOT actually perform any of these actions! It merely provides 
-an intermediary step between your app and a library that takes care of the actual database manipulation.
+Note that this library doesn't perform any actions itself, yet merely provides an intermediary layer between your app and a library that takes care of the actual database manipulation.
 
-The core functions perform the following actions (largely taken from https://github.com/persvr/perstore):
+The core functions perform the following actions:
 
 * `get` retrieves a resource by its id.
 * `query` retrieves the entire collection of resources, that may then be filtered, sorted and paged.
@@ -89,7 +80,11 @@ To see how to setup this library to be actually used in eXist, build the app in 
 JSON-RPC
 ========
 
-TODO
+Property | Description
+---------|------------
+`method` | The (unprefixed) xquery function to execute
+`call-id` | An identifier used to match the call in client and server (this is not the same as the resource)
+`params` | An array of arguments that the function will take
 
 
 RESTXQ
