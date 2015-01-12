@@ -90,7 +90,7 @@ Property | Description
 RESTXQ
 ======
 
-It would be nice to process RST with RESTXQ. However, currently RESTXQ doesn't allow for regular expressions in path annotations. So unfortunately using this library together with RESTXQ is still pending. See the [rstxq.xql](https://github.com/lagua/xrst/blob/master/test/apps/rst-test/modules/rstxq.xql) file in the test app for annotation examples.
+Currently RESTXQ doesn't allow for regular expressions in path annotations. So unfortunately using this library together with RESTXQ is still pending. See the [rstxq.xql](https://github.com/lagua/xrst/blob/master/test/apps/rst-test/modules/rstxq.xql) file in the test app for annotation examples.
 
 
 JSON Modeling with JSON Schema and querying with RQL
