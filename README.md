@@ -21,7 +21,7 @@ specific functionality on the data-set or related data.
 * CRUD: A standard set of functions to request and modify data: get, query, put, and delete.
 * JSON-RPC: contents may be posted that triggers custom functionality, either on a specific resource or the entire collection. It can be seen as a simplified XML-RPC.
 
-Note that this library doesn't perform any actions itself, yet merely provides an intermediary layer between your app and a library that takes care of the actual database manipulation.
+Note that this library doesn't perform any actions itself, but merely provides an intermediary layer between your app and a library that takes care of the actual database manipulation.
 
 The core functions perform the following actions:
 
