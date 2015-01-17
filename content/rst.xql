@@ -81,10 +81,15 @@ declare function rst:process($path as xs:string, $directives as map, $query-stri
 		else
 			<http:response status="405" message="Method not implemented"/>
 	let $output :=
-		if(matches($content-type,"application/(json|javascript)")) then
+		if(matches($accept,"application/(json|javascript)")) then
 			(
 				util:declare-option("output:method", "json"),
 				util:declare-option("output:media-type", "application/json")
+			)
+		else if(matches($accept,"text/")) then
+			(
+				util:declare-option("output:method", "text"),
+				util:declare-option("output:media-type", $content-type)
 			)
 		else
 			(
