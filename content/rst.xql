@@ -80,10 +80,17 @@ declare function rst:process($path as xs:string, $directives as map, $query-stri
 			rst:delete($collection,$id,$directives)
 		else
 			<http:response status="405" message="Method not implemented"/>
-	let $output := (
-		util:declare-option("output:method", "json"),
-		util:declare-option("output:media-type", "application/json")
-	)
+	let $output :=
+		if(matches($content-type,"application/(json|javascript)")) then
+			(
+				util:declare-option("output:method", "json"),
+				util:declare-option("output:media-type", "application/json")
+			)
+		else
+			(
+				util:declare-option("output:method", "xml"),
+				util:declare-option("output:media-type", "application/xml")
+			)
 	return
 		if(name($response[1]) = "http:response") then
 			(: expect custom response :)
