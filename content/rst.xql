@@ -21,27 +21,31 @@ declare function rst:process($path as xs:string, $directives as map) {
 declare function rst:process($path as xs:string, $directives as map, $query-string as xs:string) {
 	let $directives := map:new(($directives, map { "from-controller" := true() }))
 	let $method := request:get-method()
-	let $content-type := string(request:get-header("content-type"))
-	let $accept := string(request:get-header("accept"))
+	let $content-type := string(request:get-header("Content-Type"))
+	let $accept := string(request:get-header("Accept"))
+	let $range := string(request:get-header("Range"))
 	let $data :=
 		if($method = ("PUT","POST")) then
 			string(request:get-data())
 		else
 			()
-	return rst:process($path, $directives, $query-string, $content-type, $accept, $data, $method)
+	return rst:process($path, $directives, $query-string, $content-type, $accept, $data, $method, $range)
 };
 
 (:  the main function to call from RESTXQ :)
-declare function rst:process($path as xs:string, $directives as map, $query-string as xs:string, $content-type as xs:string, $accept as xs:string, $data as item()*, $method as xs:string) {
+declare function rst:process($path as xs:string, $directives as map, $query-string as xs:string, $content-type as xs:string, $accept as xs:string, $data as item()*, $method as xs:string, $range as xs:string) {
 	(: TODO check if all properties are available, if not throw error :)
-	let $directives := 
-		if(map:contains($directives,"id-property")) then
-			$directives
-		else
-			map:new(($directives, map { "id-property" := "id" }))
 	let $model := replace($path, "^/?([^/]+).*", "$1")
 	let $id := replace($path, "^/?" || $model || "/(.*)", "$1")
 	let $root := $directives("root-collection")
+	let $directives := map:new(($directives, map {
+		"content-type" := $content-type,
+		"accept" := $accept,
+		"range" := $range,
+		"model" := $model,
+		"id" := $id,
+		"id-property" := ( if(map:contains($directives,"id-property")) then $directives("id-property") else "id" )
+	}))
 	(: TODO choose default root :)
 	let $collection := $root || "/" || $model
 	let $response :=
