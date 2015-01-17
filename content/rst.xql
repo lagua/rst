@@ -86,7 +86,7 @@ declare function rst:process($path as xs:string, $directives as map, $query-stri
 				util:declare-option("output:method", "json"),
 				util:declare-option("output:media-type", "application/json")
 			)
-		else if(matches($accept,"application/xml|text/html")) then
+		else if(matches($accept,"application/xml")) then
 			(
 				util:declare-option("output:method", "xml"),
 				util:declare-option("output:media-type", "application/xml")
