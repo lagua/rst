@@ -86,16 +86,13 @@ declare function rst:process($path as xs:string, $directives as map, $query-stri
 				util:declare-option("output:method", "json"),
 				util:declare-option("output:media-type", "application/json")
 			)
-		else if(matches($accept,"text/")) then
-			(
-				util:declare-option("output:method", "text"),
-				util:declare-option("output:media-type", $content-type)
-			)
-		else
+		else if(matches($accept,"application/xml|text/html")) then
 			(
 				util:declare-option("output:method", "xml"),
 				util:declare-option("output:media-type", "application/xml")
 			)
+		else
+			()
 	return
 		if(name($response[1]) = "http:response") then
 			(: expect custom response :)
