@@ -12,7 +12,7 @@ Build the package and install into eXist using the manager in the dashboard.
 
 --------
 
-RST abstracts from HTTP methods and content negotiation as to provide a standard architecture (best practices) for REST functionality. It's inspired by [Persevere](http://persvr.org) implements the following patterns:
+RST abstracts from HTTP methods and content negotiation as to provide a standard architecture (best practices) for REST functionality. It's inspired by [Persevere](http://persvr.org) and implements the following patterns:
 
 * Model: A target path (from a REST perspective) is considered to be /path/to/collection
 * Identity: The entire path following the collection is considered to be an id, and may contain slashes. 
